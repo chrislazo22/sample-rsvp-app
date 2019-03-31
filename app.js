@@ -23,7 +23,9 @@ rsvp.addPerson = function() {
 
 rsvp.createListItem = function(text) {
   const li = $('<li></li>');
-  li.text(text);
+  const span = document.createElement('span');
+  span.textContent = text
+  li.append(span);
 
   const label = $('<label>');
   label.text('Confirmed');
@@ -31,9 +33,13 @@ rsvp.createListItem = function(text) {
   label.append(checkbox);
   li.append(label);
 
-  const button = $('<button>');
-  button.text('remove');
-  li.append(button);
+  const editButton = $('<button>');
+  editButton.text('edit');
+  li.append(editButton);
+
+  const removeButton = $('<button>');
+  removeButton.text('remove');
+  li.append(removeButton);
 
   return li;
 };
@@ -41,10 +47,21 @@ rsvp.createListItem = function(text) {
 rsvp.removePerson = function() {
   const ul = $('#invitedList');
   ul.on('click', function (e) {
-    if(e.target.tagName == 'BUTTON') {
+    if (e.target.tagName == 'BUTTON') {
+      const button = e.target;
       const li = e.target.parentNode;
       const ul = li.parentNode;
-      ul.removeChild(li);
+      if (button.textContent == 'remove') {
+        ul.removeChild(li);
+      } else if (button.textContent === 'edit') {
+        const span = li.firstElementChild;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = span.textContent;
+        li.insertBefore(input, span)
+        li.removeChild(span);
+        button.textContent = 'save';
+      }
     }
   })
 };
